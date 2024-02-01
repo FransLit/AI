@@ -87,53 +87,37 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    from game import Directions
-    paths = []
-    moves = []
-    branches = []
-
-    nextstate = problem.getStartState()
-    paths.append(nextstate)
+    discovered = []
+    stack = util.Stack()
+    pathFound = False
     
-    def goforward(paths, moves, nextstate, branches):
-            if problem.isGoalState(nextstate):
-                print("Found!!!!")
+    startstate = problem.getStartState()
+    discovered.append(startstate)
+    if problem.isGoalState(startstate):
+        return []
+    successors = problem.getSuccessors(startstate)
+    for i in successors:
+        stack.push((i[0], [i[1]], i[2]))
+
+    while not pathFound:
+        if not stack.isEmpty():
+            state, path, path_cost = stack.pop()
+            if problem.isGoalState(state):
+                pathFound = True
+                print(path_cost)
+                return path
             else:
-                path_found = False
-                for i in reversed(range(len(problem.getSuccessors(nextstate)))):
-                    if problem.getSuccessors(nextstate)[i][0] not in paths:
-                        paths.append(problem.getSuccessors(nextstate)[i][0])
-                        print(problem.getSuccessors(nextstate))
-                        temp = problem.getSuccessors(nextstate)[i][1]
-                        temp2 = nextstate
-                        nextstate = problem.getSuccessors(nextstate)[i][0]
-                        temp3 = list(moves)
-                        moves.append(temp)
-                        for i in range(len(problem.getSuccessors(temp2))):
-                            temp4 = list(temp3)
-                            if problem.getSuccessors(temp2)[i][0] not in paths and problem.getSuccessors(temp2)[i][0] != nextstate:
-                                temp4.append(problem.getSuccessors(temp2)[i][1])
-                                branches.append([problem.getSuccessors(temp2)[i][0],temp4])
-                        path_found = True
+                if state not in discovered:
+                    discovered.append(state)
+                    successors = problem.getSuccessors(state)
+                    for state, action, cost in successors:
+                        stack.push((state, path + [action], path_cost + cost))
+        else:
+            for i in reversed(stack.list):
+                stack.push(i)
+            stack.list = []
 
-                        break
-                if path_found == False and branches != []:
-                    nextstate = branches[-1][0]
-                    moves = branches[-1][1]
-                    branches.pop(-1)
-            
-            return paths, moves, nextstate, branches
-    
-    while problem.isGoalState(nextstate) == False:
-        paths, moves, nextstate, branches = goforward(paths, moves, nextstate, branches)
-    
-    #print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    #print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    #print("Successors: ", problem.getSuccessors((34, 15)))
-    
-    return moves
-
-    #util.raiseNotDefined()
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
