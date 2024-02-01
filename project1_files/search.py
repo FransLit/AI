@@ -129,9 +129,9 @@ def depthFirstSearch(problem):
     
     #print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     #print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    print("Successors: ", problem.getSuccessors((34, 15)))
+    #print("Successors: ", problem.getSuccessors((34, 15)))
     
-    return []
+    return moves
 
     #util.raiseNotDefined()
 
