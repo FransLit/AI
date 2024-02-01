@@ -145,6 +145,7 @@ def breadthFirstSearch(problem):
     pathFound = False
 
     startstate = problem.getStartState()
+    discovered.append(startstate)
     if problem.isGoalState(startstate):
         return []
     successors = problem.getSuccessors(startstate)
