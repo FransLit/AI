@@ -139,22 +139,37 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     from game import Directions
-    paths = []
-    moves = []
-    branches = []
+    discovered = []
+    queue = util.Queue()
+    next_queue = util.Queue()
+    pathFound = False
 
-    nextstate = problem.getStartState()
-    paths.append(nextstate)
-    
-    def goforward(paths, moves, nextstate, branches):
-        successors = problem.getSuccessors(nextstate)
-        print(successors)
-            
-        return paths, moves, nextstate, branches
-    
-    paths, moves, nextstate, branches = goforward(paths, moves, nextstate, branches)
-    
-    return moves
+    startstate = problem.getStartState()
+    if problem.isGoalState(startstate):
+        return []
+    successors = problem.getSuccessors(startstate)
+    for i in successors:
+        queue.push((i[0], [i[1]], i[2]))
+
+    while not pathFound:
+        if not queue.isEmpty():
+            state, path, path_cost = queue.pop()
+            if problem.isGoalState(state):
+                pathFound = True
+                print(path_cost)
+                return path
+            else:
+                if state not in discovered:
+                    discovered.append(state)
+                    successors = problem.getSuccessors(state)
+                    for state, action, cost in successors:
+                        next_queue.push((state, path + [action], path_cost + cost))
+        else:
+            for i in reversed(next_queue.list):
+                queue.push(i)
+            next_queue.list = []
+
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
