@@ -104,7 +104,6 @@ def depthFirstSearch(problem):
             state, path, path_cost = stack.pop()
             if problem.isGoalState(state):
                 pathFound = True
-                print(path_cost)
                 return path
             else:
                 if state not in discovered:
@@ -141,7 +140,6 @@ def breadthFirstSearch(problem):
             state, path, path_cost = queue.pop()
             if problem.isGoalState(state):
                 pathFound = True
-                print(path_cost)
                 return path
             else:
                 if state not in discovered:
@@ -159,7 +157,40 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    discovered = []
+    stack = util.Queue()
+    pathFound = False
+    temp = []
+    
+    startstate = problem.getStartState()
+    discovered.append(startstate)
+    if problem.isGoalState(startstate):
+        return []
+    successors = problem.getSuccessors(startstate)
+    for i in successors:
+        stack.push((i[0], [i[1]], i[2], i[2]))
+
+    def sort():
+        temp = list(stack.list)
+        stack.list = []
+        for i in sorted(temp, key=lambda x: (x[2], x[3])):
+            stack.push(i)
+
+    sort()
+    while not pathFound:
+        if not stack.isEmpty():
+            sort()
+            state, path, path_cost, cost = stack.pop()
+            if problem.isGoalState(state):
+                pathFound = True
+                return path
+            else:
+                if state not in discovered:
+                    discovered.append(state)
+                    successors = problem.getSuccessors(state)
+                    for state, action, cost in successors:
+                        stack.push((state, path + [action], path_cost + cost, cost))
+    return []
 
 def nullHeuristic(state, problem=None):
     """
