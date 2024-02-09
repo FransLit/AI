@@ -124,9 +124,7 @@ def breadthFirstSearch(problem):
     from game import Directions
     discovered = []
     queue = util.Queue()
-    next_queue = util.Queue()
     pathFound = False
-
     startstate = problem.getStartState()
     discovered.append(startstate)
     if problem.isGoalState(startstate):
@@ -141,16 +139,12 @@ def breadthFirstSearch(problem):
             if problem.isGoalState(state):
                 pathFound = True
                 return path
-            else:
-                if state not in discovered:
-                    discovered.append(state)
-                    successors = problem.getSuccessors(state)
-                    for state, action, cost in successors:
-                        next_queue.push((state, path + [action], path_cost + cost))
-        else:
-            for i in reversed(next_queue.list):
-                queue.push(i)
-            next_queue.list = []
+            if state in discovered:
+                continue
+            discovered.append(state)
+            successors = problem.getSuccessors(state)
+            for state, action, cost in successors:
+                queue.push((state, path + [action], path_cost + cost))
 
     return []
 

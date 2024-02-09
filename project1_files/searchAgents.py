@@ -288,6 +288,9 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.cornerboolean = (False, False, False, False)
+        self.start = (startingGameState.getPacmanPosition(), self.cornerboolean)
+        self.visiteddict = {self.corners[0]:False, self.corners[1]:False, self.corners[2]:False, self.corners[3]:False }
 
     def getStartState(self):
         """
@@ -295,14 +298,15 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.start
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if (all(state[1])):
+            return True
 
     def getSuccessors(self, state):
         """
@@ -325,8 +329,20 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            x = int(state[0][0])
+            y = int(state[0][1])
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x) + int(dx), int(y) + int(dy)
+            hitsWall = self.walls[nextx][nexty]
+            if hitsWall == False:
+                if (nextx, nexty) in tuple(self.visiteddict.keys()):
+                    self.visiteddict[(nextx, nexty)] = True
+                
+                print(tuple(self.visiteddict.values()))
+                successor = (((nextx, nexty), tuple(self.visiteddict.values())), action, 1)
+                successors.append(successor)
 
-        self._expanded += 1 # DO NOT CHANGE
+        self._expanded += 1 # DO NOT CHANGEs
         return successors
 
     def getCostOfActions(self, actions):
@@ -358,7 +374,7 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    print([state-i for i in corners])
     "*** YOUR CODE HERE ***"
     return 0 # Default to trivial solution
 
