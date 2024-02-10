@@ -135,7 +135,7 @@ def breadthFirstSearch(problem):
 
     while not pathFound:
         if not queue.isEmpty():
-            state, path, path_cost = queue.pop()
+            state, path, cost = queue.pop()
             if problem.isGoalState(state):
                 pathFound = True
                 return path
@@ -144,8 +144,7 @@ def breadthFirstSearch(problem):
             discovered.append(state)
             successors = problem.getSuccessors(state)
             for state, action, cost in successors:
-                queue.push((state, path + [action], path_cost + cost))
-
+                queue.push((state, path + [action], cost))
     return []
 
 def uniformCostSearch(problem):
