@@ -61,7 +61,44 @@ class MiraClassifier:
         representing a vector of values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        def trainOne(weights, C_idx):
+            acc = 0
+            for iteration in range(self.max_iterations):
+                print("Starting iteration ", iteration, "...")
+                for i in range(len(trainingData)):
+                    predictions = util.Counter()
+                    for label in self.legalLabels:
+                        predictions[label] = weights[label] * trainingData[i]
+                    y_prime = predictions.argMax()
+                    if (y_prime != trainingLabels[i]):
+                        L2 = 2 * ((trainingData[i] * trainingData[i]) ** (1/2))**2
+                        tau = ((weights[y_prime]-weights[trainingLabels[i]])*trainingData[i] + 1)/L2
+                        weights[y_prime] -= util.Counter({key: value * min(Cgrid[C_idx],tau) for key, value in dict(trainingData[i]).items()})
+                        weights[trainingLabels[i]] += util.Counter({key: value * min(Cgrid[C_idx],tau) for key, value in dict(trainingData[i]).items()})
+                for i in range(len(validationData)):
+                    predictions = util.Counter()
+                    for label in self.legalLabels:
+                        predictions[label] = weights[label] * validationData[i]
+                    y_prime = predictions.argMax()
+                    if (y_prime == validationLabels[i]):
+                        acc += 1
+
+            return weights, acc
+        
+
+        best_weights = []
+        for i in range(len(Cgrid)):
+            weights = util.Counter(self.weights)
+            weights, acc = trainOne(weights, i)
+            best_weights.append((weights,acc))
+
+        ref_acc = 0
+        for weights, acc in best_weights:
+            if acc >= ref_acc:
+                self.weights = weights
+                ref_acc = acc
+
 
     def classify(self, data ):
         """
