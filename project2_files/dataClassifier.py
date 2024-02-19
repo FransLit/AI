@@ -72,6 +72,9 @@ def enhancedFeatureExtractorDigit(datum):
     for this datum (datum is of type samples.Datum).
 
     ## DESCRIBE YOUR ENHANCED FEATURES HERE...
+    First feature is that the digit matrix is divided into two horizontally and the amount of pixel is compared(left > right).
+    Second feature is digit matrix is divided into three (left, center, right) and pixels are again compared (left + right > center)
+    Last feature takes advantage of second feature matrices and it uses the pixel rate (left + right) / center and threshold is 20
 
     ##
     """
@@ -82,7 +85,29 @@ def enhancedFeatureExtractorDigit(datum):
     #features["oneExample"] = 1
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    pixels = datum.getPixels()
+    pixels = [[1 if pixel > 0 else 0 for pixel in row] for row in pixels]
+
+    a = sum([sum(row[:len(pixels[0])//2]) for row in pixels])
+    b = sum([sum(row[len(pixels[0])//2:]) for row in pixels])
+
+    features['left_most_pixels'] = int(a > b)
+    features['right_most_pixels'] = int(b > a)
+
+    a = sum([sum(row[:len(pixels[0])//3]) for row in pixels])
+    c = sum([sum(row[len(pixels[0])//3:2*len(pixels[0])//3]) for row in pixels])
+    b = sum([sum(row[2*len(pixels[0])//3:]) for row in pixels])
+
+    features['sides_most_pixels'] = int(a + b > c)
+    features['center_most_pixels'] = int(c > a + b)
+
+    pixel_rate = (a+b / c)
+
+    if pixel_rate > 20:
+        features['pixel_rate_above_20'] = 1
+    else:
+        features['pixel_rate_above_20'] = 0
 
     return features
 
@@ -132,7 +157,7 @@ def enhancedPacmanFeatures(state, action):
     #successor = state.generateSuccessor(0, action)
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #successor = state.generateSuccessor(state)
     return features
 
 
